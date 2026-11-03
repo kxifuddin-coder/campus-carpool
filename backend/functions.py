@@ -1,12 +1,12 @@
 from sqlalchemy import Integer, String, Column, create_engine, ForeignKey, DateTime
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, Session
 from datetime import date, datetime
 
 DB_PATH = "carpool.db"
 engine = create_engine(f"sqlite:///{DB_PATH}")
 Base = declarative_base()
 
-class Riders(Base):
+class Rides(Base):
     __tablename__ = "riders"
     id = Column(Integer, primary_key=True)
     driver_roll = Column(String)
@@ -23,7 +23,7 @@ class Riders(Base):
 class Seats(Base):
     __tablename__ = "seats"
     id = Column(Integer, primary_key=True)
-    rider_id = Column(Integer, ForeignKey("riders.id"), nullable=False)
+    ride_id = Column(Integer, ForeignKey("riders.id"), nullable=False)
     roll_no = Column(String, nullable=False)
     booked_on = Column(DateTime, default=date.today)
     cancelled = Column(Integer, nullable=False, default=0)
@@ -31,7 +31,7 @@ class Seats(Base):
 
 Base.metadata.create_all(engine)
 
-
+session = Session(engine)
 
 
 
