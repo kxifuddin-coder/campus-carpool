@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 import E4
 import E5
+import E6
 
 app = FastAPI()
 
@@ -11,3 +12,7 @@ def cancel(driver_roll : str):
 @app.post("/book_ride")
 def book_ride(ride_id: int, roll_no : str):
     return E5.join_ride(ride_id, roll_no)
+
+@app.patch("/ride")
+def leave_ride(ride_id: int):
+    return E6.leave_ride(ride_id)

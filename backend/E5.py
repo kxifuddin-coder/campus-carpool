@@ -6,7 +6,6 @@ def join_ride(ride_id,roll_no):
     session = Session(engine)
 
     ride = session.query(Rides).filter(Rides.id == ride_id).first()
-    print(ride)
     if not ride:
         raise HTTPException(status_code=400, detail="Ride not found")
 
