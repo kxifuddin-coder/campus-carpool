@@ -11,8 +11,12 @@ def cancel(driver_roll : str):
 
 @app.post("/book_ride")
 def book_ride(ride_id: int, roll_no : str):
+    if ride_id < 1:
+        raise HTTPException(status_code=400, detail="Ride id must be greater than 0")
     return E5.join_ride(ride_id, roll_no)
 
 @app.patch("/ride")
 def leave_ride(ride_id: int):
+    if ride_id < 1:
+        raise HTTPException(status_code=400, detail="Ride id must be greater than 0")
     return E6.leave_ride(ride_id)
