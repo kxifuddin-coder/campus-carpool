@@ -14,6 +14,8 @@ def cancel_ride(driver_roll):
     if not seat:
         raise HTTPException(status_code=400, detail="Seat not found")
 
+
+
     ride.status = "cancelled"
     seat.cancelled = 1
 
