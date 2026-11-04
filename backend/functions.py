@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, Column, create_engine, ForeignKey, DateTime
+from sqlalchemy import Integer, String, Column, create_engine, ForeignKey, DateTime, Date, Time
 from sqlalchemy.orm import declarative_base, Session
 from datetime import date, datetime, time, timedelta
 
@@ -12,8 +12,8 @@ class Rides(Base):
     driver_roll = Column(String)
     from_place = Column(String)
     to_place = Column(String)
-    ride_date = Column(DateTime, default=date.today )
-    depart_time = Column(DateTime)
+    ride_date = Column(Date, default=date.today )
+    depart_time = Column(Time)
     total_seats = Column(Integer)
     seats_left = Column(Integer)
     status = Column(String)
@@ -32,16 +32,16 @@ class Seats(Base):
 Base.metadata.create_all(engine)
 
 def add_starting_values():
+
     with Session(engine) as session:
 
-        # Prevent duplicate sample data every time the API restarts
+        # Prevent duplicate data
         if session.query(Rides).first():
             print("Starting data already exists.")
             return
 
         today = date.today()
 
-        # Sample rides
         rides_data = [
             {
                 "driver_roll": "AT101",
@@ -137,37 +137,31 @@ def add_starting_values():
 
             passengers = data.pop("passengers")
 
-            ride = Rides(
-                **{
-                    **data,
-                    "ride_date": datetime.combine(
-                        data["ride_date"], time.min
-                    ),
-                    "depart_time": datetime.combine(
-                        today, data["depart_time"]
-                    )
-                }
-            )
+            # Create ride directly using Date and Time objects
+            ride = Rides(**data)
 
             session.add(ride)
 
-            # Generate the ride ID before creating seat records
+            # Generate ride ID before inserting passengers
             session.flush()
 
             for passenger in passengers:
+
                 seat = Seats(
                     ride_id=ride.id,
                     roll_no=passenger,
-                    booked_on=datetime.now(),
+                    booked_on=today,
                     cancelled=0
                 )
 
                 session.add(seat)
 
         session.commit()
+
         print("8 starting rides added successfully!")
 
 
 
 if __name__ == "__main__":
     add_starting_values()
+    

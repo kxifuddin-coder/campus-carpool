@@ -25,8 +25,4 @@ def get_rides(from_location, to_location, date):
     session.commit()
     session.close()
     return response
-
-
-def get_roll(id, roll_no):
-    session = Session()
       
