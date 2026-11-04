@@ -6,8 +6,8 @@ import E6
 app = FastAPI()
 
 @app.patch("/cancel")
-def cancel(driver_roll : str):
-    return E4.cancel_ride(driver_roll)
+def cancel(ride_id : int,driver_roll : str):
+    return E4.cancel_ride(ride_id, driver_roll)
 
 @app.post("/book_ride")
 def book_ride(ride_id: int, roll_no : str):
