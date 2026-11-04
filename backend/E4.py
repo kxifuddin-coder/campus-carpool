@@ -25,3 +25,10 @@ def cancel_ride(ride_id,driver_roll):
     session.add_all([ride])
     session.commit()
     session.close()
+
+
+def get_rides():
+    session = Session(engine)
+    rides = session.query(Rides).all()
+    session.close()
+    return rides
