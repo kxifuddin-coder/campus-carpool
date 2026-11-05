@@ -33,3 +33,7 @@ def leave_ride(ride_id: int,roll_no : str):
 @app.get("/Rides")
 def get_rides():
     return E4.get_rides()
+
+@app.get("/get_ride")
+def get_ride(ride_id:int):
+    return E5.get_ride(ride_id=ride_id)
