@@ -1,5 +1,10 @@
+from datetime import date, time
+from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+import E1
+import E2
+import E3
 import E4
 import E5
 import E6
@@ -16,6 +21,33 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- E1: Get upcoming / filtered rides ---
+@app.get("/get_rides")
+def get_rides(from_location: Optional[str] = None, to_location: Optional[str] = None, date: Optional[str] = None):
+    if from_location and to_location and date:
+        rides = E1.get_rides(from_location=from_location, to_location=to_location, date=date)
+        if not rides:
+            raise HTTPException(status_code=404, detail="No rides found")
+        return rides
+    return E4.get_rides()
+
+@app.get("/Rides")
+def get_all_rides():
+    return E4.get_rides()
+
+# --- E2: Get one ride by ID with passengers ---
+@app.get("/get_ride")
+def get_ride(ride_id: Optional[int] = None, id: Optional[int] = None):
+    target_id = ride_id if ride_id is not None else id
+    if target_id is None:
+        raise HTTPException(status_code=422, detail="Ride id is required")
+    return E2.get_ride(ride_id=target_id)
+
+# --- E3: Offer a ride ---
+@app.post("/offer_ride")
+def offer_ride(driver_roll: str, from_place: str, to_place: str, ride_date: date, depart_time: time, total_seats: int):
+    return E3.offer_ride(driver_roll=driver_roll, from_place=from_place, to_place=to_place, ride_date=ride_date, depart_time=depart_time, total_seats=total_seats)
 
 # --- E4: Cancel a ride ---
 @app.patch("/cancel")
@@ -35,16 +67,6 @@ def leave_ride(ride_id: int, roll_no: str):
     if ride_id < 1:
         raise HTTPException(status_code=400, detail="Ride id must be greater than 0")
     return E6.leave_ride(ride_id, roll_no)
-
-# --- E1 (via E4): Get all rides ---
-@app.get("/Rides")
-def get_rides():
-    return E4.get_rides()
-
-# --- E2 (via E5): Get one ride with passengers ---
-@app.get("/get_ride")
-def get_ride(ride_id: int):
-    return E5.get_ride(ride_id=ride_id)
 
 # --- E7: Mark a ride completed ---
 @app.patch("/complete_ride")
