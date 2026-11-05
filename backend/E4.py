@@ -1,41 +1,34 @@
 from functions import *
 from fastapi import HTTPException
 
-def cancel_ride(driver_roll):
+def cancel_ride(ride_id,driver_roll):
 
     session = Session(engine)
 
-    ride = session.query(Rides).filter(Rides.driver_roll == driver_roll).first()
-    seat = session.query(Seats).filter(ride.id == Seats.ride_id).first()
+    ride = session.query(Rides).filter(Rides.id == ride_id, Rides.driver_roll == driver_roll).first()
 
     if not ride:
-        raise HTTPException(status_code=400, detail="Driver Roll not found")
+        raise HTTPException(status_code=400, detail="Ride not found (check ride_id and driver_roll)")
+
+    seats = session.query(Seats).filter(ride.id == Seats.ride_id).all()
+    for seat in seats:
+        if not seat:
+            raise HTTPException(status_code=400, detail="No Seats booked for this ride")
+
+        seat.cancelled = 1
+
+    if ride.status != "scheduled":
+        raise HTTPException(status_code=400, detail="This ride is currently not scheduled")
 
     ride.status = "cancelled"
-    seat.cancelled = 1
 
     session.add_all([ride])
     session.commit()
     session.close()
 
-def join_ride(ride_id,roll_no):
+
+def get_rides():
     session = Session(engine)
-
-    ride = session.query(Rides).filter(Rides.id == ride_id).first()
-    print(ride)
-    if not ride:
-        raise HTTPException(status_code=400, detail="Ride not found")
-
-    book = Seats(ride_id=ride.id,roll_no=roll_no,booked_on=date.today(),cancelled=0)
-    session.add(book)
-    session.commit()
-    response = {
-        "id": book.id,
-        "ride_id": book.ride_id,
-        "roll_no": book.roll_no,
-        "booked_on": book.booked_on,
-        "cancelled": book.cancelled
-    }
+    rides = session.query(Rides).all()
     session.close()
-    return response
-
+    return rides
