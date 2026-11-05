@@ -1,13 +1,13 @@
 from sqlalchemy import Integer, String, Column, create_engine, ForeignKey, DateTime, Date, Time
 from sqlalchemy.orm import declarative_base, Session
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, timedelta, time
 
 DB_PATH = "carpool.db"
 engine = create_engine(f"sqlite:///{DB_PATH}")
 Base = declarative_base()
 
 class Rides(Base):
-    __tablename__ = "riders"
+    __tablename__ = "rides"
     id = Column(Integer, primary_key=True)
     driver_roll = Column(String)
     from_place = Column(String)
@@ -23,13 +23,16 @@ class Rides(Base):
 class Seats(Base):
     __tablename__ = "seats"
     id = Column(Integer, primary_key=True)
-    ride_id = Column(Integer, ForeignKey("riders.id"), nullable=False)
+    ride_id = Column(Integer, ForeignKey("rides.id"), nullable=False)
     roll_no = Column(String, nullable=False)
     booked_on = Column(DateTime, default=date.today)
     cancelled = Column(Integer, nullable=False, default=0)
 
 
 Base.metadata.create_all(engine)
+
+# session = Session(engine)
+
 
 def add_starting_values():
 
@@ -164,4 +167,3 @@ def add_starting_values():
 
 if __name__ == "__main__":
     add_starting_values()
-    
