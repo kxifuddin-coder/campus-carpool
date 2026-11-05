@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import RidesCard from "./components/RidesCard.jsx";
+import AddRides from "./components/OfferAride.jsx";
 
 const API_URL = "http://127.0.0.1:8001";
 
@@ -34,6 +35,12 @@ function App() {
                />
           ))}
         </ul>
+        <div>
+          <h2>Offer a Ride</h2>
+        </div>
+        <div className="section">
+        <AddRides apiUrl={API_URL} onRefresh={() => loadRides(FromFilter,ToFilter,DateFilter)} />
+      </div>
         </>
   );
 }
