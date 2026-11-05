@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import RidesCard from "./components/RidesCard.jsx";
 import AddRides from "./components/OfferAride.jsx";
+import "./App.css";
 
 const API_URL = "http://127.0.0.1:8001";
 
