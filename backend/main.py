@@ -25,16 +25,11 @@ app.add_middleware(
 # --- E1: Get upcoming / filtered rides ---
 @app.get("/get_rides")
 def get_rides(from_location: Optional[str] = None, to_location: Optional[str] = None, date: Optional[str] = None):
-    if from_location and to_location and date:
-        rides = E1.get_rides(from_location=from_location, to_location=to_location, date=date)
-        if not rides:
-            raise HTTPException(status_code=404, detail="No rides found")
-        return rides
-    return E4.get_rides()
+    return E1.get_rides(from_location=from_location, to_location=to_location, date=date)
 
 @app.get("/Rides")
-def get_all_rides():
-    return E4.get_rides()
+def get_all_rides(from_location: Optional[str] = None, to_location: Optional[str] = None, date: Optional[str] = None):
+    return E1.get_rides(from_location=from_location, to_location=to_location, date=date)
 
 # --- E2: Get one ride by ID with passengers ---
 @app.get("/get_ride")
