@@ -1,5 +1,4 @@
 from datetime import date, time
-from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import E1

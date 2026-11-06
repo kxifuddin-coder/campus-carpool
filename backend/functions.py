@@ -1,6 +1,6 @@
 from sqlalchemy import Integer, String, Column, create_engine, ForeignKey, DateTime, Date, Time
-from sqlalchemy.orm import declarative_base, Session
-from datetime import date, datetime, timedelta, time
+from sqlalchemy.orm import declarative_base
+from datetime import date, timedelta, time
 
 DB_PATH = "carpool.db"
 engine = create_engine(f"sqlite:///{DB_PATH}")
