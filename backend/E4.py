@@ -1,30 +1,26 @@
 from functions import *
 from fastapi import HTTPException
 
-def cancel_ride(ride_id,driver_roll):
-
+def cancel_ride(ride_id, driver_roll):
     session = Session(engine)
-
     ride = session.query(Rides).filter(Rides.id == ride_id, Rides.driver_roll == driver_roll).first()
 
     if not ride:
-        raise HTTPException(status_code=400, detail="Ride not found (check ride_id and driver_roll)")
-
-    seats = session.query(Seats).filter(ride.id == Seats.ride_id).all()
-    for seat in seats:
-        if not seat:
-            raise HTTPException(status_code=400, detail="No Seats booked for this ride")
-
-        seat.cancelled = 1
+        session.close()
+        raise HTTPException(status_code=404, detail="Ride not found (check ride_id and driver_roll)")
 
     if ride.status != "scheduled":
+        session.close()
         raise HTTPException(status_code=400, detail="This ride is currently not scheduled")
 
-    ride.status = "cancelled"
+    seats = session.query(Seats).filter(Seats.ride_id == ride.id).all()
+    for seat in seats:
+        seat.cancelled = 1
 
-    session.add_all([ride])
+    ride.status = "cancelled"
     session.commit()
     session.close()
+    return {"message": "Ride cancelled successfully"}
 
 
 def get_rides():

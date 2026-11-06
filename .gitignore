@@ -1,0 +1,12 @@
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite databases (if preferred, or local copies)
+*.sqlite3

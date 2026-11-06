@@ -1,4 +1,5 @@
 from datetime import date, time
+from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import E1
@@ -23,12 +24,19 @@ app.add_middleware(
 
 # --- E1: Get upcoming / filtered rides ---
 @app.get("/get_rides")
-def get_rides(from_location: Optional[str] = None, to_location: Optional[str] = None, date: Optional[str] = None):
-    return E1.get_rides(from_location=from_location, to_location=to_location, date=date)
-
 @app.get("/Rides")
-def get_all_rides(from_location: Optional[str] = None, to_location: Optional[str] = None, date: Optional[str] = None):
-    return E1.get_rides(from_location=from_location, to_location=to_location, date=date)
+def get_rides(
+    from_location: Optional[str] = None,
+    to_location: Optional[str] = None,
+    date: Optional[str] = None,
+    from_place: Optional[str] = None,
+    to_place: Optional[str] = None,
+    ride_date: Optional[str] = None,
+):
+    from_val = from_location or from_place
+    to_val = to_location or to_place
+    date_val = date or ride_date
+    return E1.get_rides(from_location=from_val, to_location=to_val, date=date_val)
 
 # --- E2: Get one ride by ID with passengers ---
 @app.get("/get_ride")
@@ -36,7 +44,10 @@ def get_ride(ride_id: Optional[int] = None, id: Optional[int] = None):
     target_id = ride_id if ride_id is not None else id
     if target_id is None:
         raise HTTPException(status_code=422, detail="Ride id is required")
-    return E2.get_ride(ride_id=target_id)
+    res = E2.get_ride(ride_id=target_id)
+    if res is None:
+        raise HTTPException(status_code=404, detail="Ride not found")
+    return res
 
 # --- E3: Offer a ride ---
 @app.post("/offer_ride")
